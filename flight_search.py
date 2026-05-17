@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Flight Search v2: SFO → Venice area via SerpAPI Google Flights
-Searches multiple nearby airports and stop configurations.
+Flight Search: multi-airport, multi-date Google Flights comparison via SerpAPI.
+Searches nearby airports and stop configurations in a single run.
 
 Requirements: pip install requests openpyxl
 """
@@ -23,15 +23,15 @@ except ImportError:
 API_KEY = os.environ.get("SERPAPI_KEY", "")
 SEARCH_URL = "https://serpapi.com/search"
 
-# Venice + nearby airports that have better business class connections
+# Destination airports to compare (code, label)
 DESTINATIONS = [
-    ("VCE", "Venice"),
-    ("MXP", "Milan Malpensa"),   # ~2.5hr train to Venice
-    ("TSF", "Venice Treviso"),
+    ("JFK", "New York JFK"),
+    ("EWR", "Newark"),
+    ("LGA", "LaGuardia"),
 ]
 
-RETURN_DATES = ["2026-06-15", "2026-06-16"]
-DEPART_DATE = "2026-06-09"
+RETURN_DATES = ["2026-07-20", "2026-07-21"]
+DEPART_DATE = "2026-07-12"
 
 # Try both 1 stop max and 2 stops max
 STOP_OPTIONS = [1, 2]
@@ -44,9 +44,8 @@ def search_flights(dest_code, return_date, max_stops):
         "arrival_id": dest_code,
         "outbound_date": DEPART_DATE,
         "return_date": return_date,
-        "travel_class": 3,  # business
-        "adults": 2,
-        "children": 1,
+        "travel_class": 1,  # 1=economy, 2=premium economy, 3=business, 4=first
+        "adults": 1,
         "stops": max_stops,
         "currency": "USD",
         "hl": "en",
@@ -99,7 +98,7 @@ def parse_flight(flight, dest_code, dest_name, return_date):
         "layovers": " | ".join(layover_strs) if layover_strs else "Nonstop",
     }
 
-def export_to_excel(all_rows, filename="sfo_venice_flights.xlsx"):
+def export_to_excel(all_rows, filename="flights_results.xlsx"):
     wb = Workbook()
     ws = wb.active
     ws.title = "Flight Results"
@@ -226,8 +225,7 @@ def main():
         print(f"Spreadsheet saved: {fname}")
     else:
         print("\n  No flights found across any search.")
-        print("  This likely means business class inventory isn't loaded yet for June 2026.")
-        print("  Try checking Google Flights directly in a browser to confirm.")
+        print("  Try adjusting dates or destinations, or check Google Flights directly.")
 
 if __name__ == "__main__":
     main()
