@@ -1,0 +1,4 @@
+.env
+flights_*.xlsx
+__pycache__/
+*.pyc
