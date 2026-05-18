@@ -1,21 +1,13 @@
-# Flight Search Tool
+# Flight Search
 
-A Python script that searches Google Flights via SerpAPI for multi-airport, multi-stop-count flight combinations and exports results to a formatted Excel workbook for easy comparison.
+Searches Google Flights via SerpAPI across multiple airport codes, stop counts, and return dates in a single run. Exports results to a formatted Excel workbook.
 
-## The Problem
+## What It Does
 
-Searching flights manually means running the same query multiple times — once per destination airport, once per stop count, once per return date. For a trip with three possible destination airports, two return dates, and two stop limits, that's 12 separate searches. This does all of them in one run and puts the results in a spreadsheet.
-
-## What This Does
-
-- Searches multiple destination airport codes in a single run (e.g., primary airport + nearby alternatives)
-- Tries multiple stop configurations (1-stop max, 2-stop max)
-- Tries multiple return date options
-- Exports all results to a formatted Excel workbook with:
-  - Flight details (airline, flight numbers, departure/arrival times)
-  - Layover breakdowns by airport and duration
-  - Total trip duration and price
-  - Sorted by price within each search configuration
+- Queries multiple destination airports (e.g., JFK + EWR + LGA)
+- Varies stop count (1-stop max, 2-stop max) and return dates
+- Exports all results to an Excel workbook with airline, flight numbers, layover breakdowns, duration, and price
+- Deduplicates across search combinations
 
 ## Setup
 
@@ -23,32 +15,32 @@ Searching flights manually means running the same query multiple times — once 
 pip install requests openpyxl
 ```
 
-Get a free API key from [SerpAPI](https://serpapi.com) (100 free searches/month).
+Get a free API key from [SerpAPI](https://serpapi.com) (100 searches/month on the free tier).
 
-Create a `.env` file:
-```
-SERPAPI_KEY=your_key_here
-```
-
-Or pass it directly:
 ```bash
-SERPAPI_KEY=your_key python3 flight_search.py
+cp .env.example .env
+# add your SERPAPI_KEY to .env
 ```
 
 ## Configuration
 
-Edit the top of `flight_search.py` to set your search parameters:
+Edit the top of `flight_search.py`:
 
 ```python
-DESTINATIONS = [("JFK", "New York"), ("EWR", "Newark")]  # airport code + label
-DEPART_DATE  = "2026-07-01"
-RETURN_DATES = ["2026-07-14", "2026-07-15"]
-STOP_OPTIONS = [1, 2]     # max stops per search
-# travel_class: 1=economy, 2=premium economy, 3=business, 4=first
+DESTINATIONS = [("JFK", "New York JFK"), ("EWR", "Newark")]
+DEPART_DATE  = "2026-07-12"
+RETURN_DATES = ["2026-07-20", "2026-07-21"]
+STOP_OPTIONS = [1, 2]
 ```
 
-Output: `flights_YYYY-MM-DD.xlsx` in the current directory.
+## Usage
 
-## Built With
+```bash
+python3 flight_search.py
+```
 
-Python 3, `requests`, `openpyxl`. Data from [SerpAPI Google Flights](https://serpapi.com/google-flights-api). Built with AI assistance (Claude).
+Output: `flights_results.xlsx` in the current directory.
+
+## Stack
+
+Python 3, `requests`, `openpyxl`. Data from [SerpAPI Google Flights](https://serpapi.com/google-flights-api).
